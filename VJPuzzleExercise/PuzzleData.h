@@ -10,7 +10,7 @@
 #import "Tile.h"
 
 typedef enum {
-    MoveDirectionLeft, MoveDirectionRight, MoveDirectionTop, MoveDirectionBottom
+    MoveDirectionNone, MoveDirectionTop, MoveDirectionRight, MoveDirectionBottom, MoveDirectionLeft
 } MoveDirection;
 
 @interface PuzzleData : NSObject
@@ -20,9 +20,11 @@ typedef enum {
 - (Tile*)tileFromTouchPoint:(CGPoint)point;
 - (Tile*)emptyTile;
 
+- (MoveDirection)findMoveForTile:(Tile*)tile;
+
 - (void)randomiseTiles;
 
-- (BOOL)pointWithinBounds:(CGPoint)point;
+- (BOOL)isPointWithinBounds:(CGPoint)point;
 - (BOOL)isPuzzleSolved;
 - (BOOL)canMoveTile:(Tile*)tile toDirection:(MoveDirection)direction;
 - (void)swapTileLocation:(Tile*)tile1 withTile:(Tile*)tile2;

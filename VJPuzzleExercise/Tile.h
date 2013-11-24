@@ -11,10 +11,9 @@
 @interface Tile : NSObject
 
 @property CGPoint locationInArray; // i && j
-@property CGRect coordinateInView; // move to helper method
+@property CGRect coordinateInView; // frame in view
 
 @property NSInteger index;
-
-@property BOOL isEmpty;
+@property BOOL isEmpty; // empty slot
 
 @end

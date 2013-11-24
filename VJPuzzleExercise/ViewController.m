@@ -14,6 +14,8 @@
 #define kNumOfRows 4
 #define kNumOfCols 4
 
+#define kTileTag 100
+
 @interface ViewController ()
 @property (nonatomic, strong) UIView *puzzleView;
 @property (nonatomic, strong) PuzzleData *data;
@@ -28,10 +30,11 @@
     if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
-    
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Solve" style:UIBarButtonItemStyleBordered target:self action:@selector(solveButtonPressed:)];
-    
-    self.data = [[PuzzleData alloc]initWithRowCount:kNumOfRows colCount:kNumOfRows];
+
+    // allow user to select random image
+    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"New Image" style:UIBarButtonItemStyleBordered target:self action:@selector(selImageButtonPressed:)];
+
+    self.data = [[PuzzleData alloc]initWithRowCount:kNumOfRows colCount:kNumOfCols];
     self.view.backgroundColor = [UIColor whiteColor];
     
     // initialise container view - it's a square
@@ -39,29 +42,24 @@
     self.puzzleView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, puzzleWidth, puzzleWidth)];
     [self.view addSubview:self.puzzleView];
     
-    // register gesture recognizer to container view
-    UIPanGestureRecognizer *drag = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tileDragged:)];
+    // pan gesture
+    UIPanGestureRecognizer *drag = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tileWasDragged:)];
     [self.puzzleView addGestureRecognizer:drag];
  
+    // tap gesture
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tileWasTapped:)];
+    [self.puzzleView addGestureRecognizer:tap];
+    
+    // shuffle then layout tiles
     [self.data randomiseTiles];
-    [self layoutTileImages];
+    [self layoutTilesWithImageName:@"globe.jpg"];
 }
 
-- (void)solveButtonPressed:(id)sender {
-    // TODO
-    for(UIView *view in [self.puzzleView subviews]) {
-        [view removeFromSuperview];
-    }
-    // self.data solve
-    // [self layoutTileImages]
-}
-
-- (void)layoutTileImages {
+- (void)layoutTilesWithImageName:(NSString*)imageName {
     
-    // tile images in 2D Array
-    NSArray *images = [ImageUtil makeTilesFromImage:@"globe.jpg" rowCount:kNumOfRows colCount:kNumOfRows];
+    // image tiles in an array
+    NSArray *images = [ImageUtil makeTilesFromImage:imageName rowCount:kNumOfRows colCount:kNumOfRows];
     
-    // init vars
     CGFloat x, y = 0.0;
     CGFloat tileWidth = self.puzzleView.frame.size.width/kNumOfRows;
     
@@ -70,7 +68,7 @@
          for(int j=0; j<self.data.colCount; j++) {
 
             Tile *tile = [self.data tileAtRow:i col:j];
-             UIImage *image = [images objectAtIndex:tile.index];
+            UIImage *image = [images objectAtIndex:tile.index];
              
             // TODO these shouldn't be stored in the model? Oh well..
             tile.coordinateInView = CGRectMake(x, y, tileWidth, tileWidth);
@@ -78,14 +76,12 @@
             // tile view
             UIImageView *imgView = [[UIImageView alloc]initWithFrame:CGRectMake(x, y, tileWidth, tileWidth)];
             imgView.contentMode = UIViewContentModeScaleAspectFill;
-            if(tile.isEmpty) {
-//                imgView.backgroundColor = [UIColor whiteColor];
-            } else {
+            if(!tile.isEmpty) {
                 imgView.image = image;
             }
             imgView.layer.borderWidth = 1.0;
             imgView.layer.borderColor = [UIColor blackColor].CGColor;
-            imgView.tag = 100+tile.index;
+            imgView.tag = kTileTag+tile.index;
              
             [self.puzzleView addSubview:imgView];
             x += tileWidth;
@@ -96,8 +92,7 @@
 }
 
 - (MoveDirection)directionFromVelocity:(CGPoint)velocity {
-    
-    // TODO smoothen vector?
+    // if moving sideways, use the highest value
     CGFloat absX = fabs(velocity.x);
     CGFloat absY = fabs(velocity.y);
     if(absX > 0.0 && absY > 0.0) {
@@ -121,7 +116,21 @@
     return direction;
 }
 
-- (void)tileDragged:(id)sender {
+- (void)tileWasTapped:(id)sender {
+
+    UITapGestureRecognizer *tap = (UITapGestureRecognizer*)sender;
+    Tile *tile = [self.data tileFromTouchPoint:[tap locationInView:self.puzzleView]];
+    MoveDirection dir = [self.data findMoveForTile:tile];
+    
+    if(dir != MoveDirectionNone) {
+        [self.data swapTileLocation:tile withTile:[self.data emptyTile]];
+        [UIView animateWithDuration:0.2 animations:^{
+            [self.puzzleView viewWithTag:kTileTag+tile.index].frame = tile.coordinateInView;
+        }];
+    }
+}
+
+- (void)tileWasDragged:(id)sender {
     UIPanGestureRecognizer *drag = (UIPanGestureRecognizer*)sender;
     
     //start drag
@@ -134,8 +143,8 @@
     // dragging
     if(drag.state == UIGestureRecognizerStateChanged) {
         
+        // check if move is legal
         if(!self.swipe.initialised) {
-            // check if moving to an empty slot
             CGPoint velocity = [drag velocityInView:self.view];
             self.swipe.direction = [self directionFromVelocity:velocity];
             self.swipe.canMove = [self.data canMoveTile:self.swipe.movedTile toDirection:self.swipe.direction];
@@ -144,11 +153,16 @@
 //        NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
     
         if(self.swipe.canMove) {
+            
+            // TODO check bounds here
+            
             CGPoint translation = [drag translationInView:self.view];
-            UIView *view = [self.puzzleView viewWithTag:100+self.swipe.movedTile.index];
+            UIView *view = [self.puzzleView viewWithTag:kTileTag+self.swipe.movedTile.index];
             
             CGFloat destX = view.center.x;
             CGFloat destY = view.center.y;
+            
+            // move along either horizontaly or vertically
             if(self.swipe.direction == MoveDirectionLeft || self.swipe.direction == MoveDirectionRight) {
                 destX += translation.x;
             } else {
@@ -163,10 +177,12 @@
     // end drag
     else if(drag.state == UIGestureRecognizerStateEnded) {
         
+        // TODO check if half way move???
+        
         if(self.swipe.canMove) {
             [self.data swapTileLocation:self.swipe.movedTile withTile:[self.data emptyTile]];
             [UIView animateWithDuration:0.1 animations:^{
-                [self.puzzleView viewWithTag:100+self.swipe.movedTile.index].frame = self.swipe.movedTile.coordinateInView;
+                [self.puzzleView viewWithTag:kTileTag+self.swipe.movedTile.index].frame = self.swipe.movedTile.coordinateInView;
             }];
         }
         self.swipe = nil;

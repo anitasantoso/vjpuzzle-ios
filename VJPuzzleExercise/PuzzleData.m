@@ -10,7 +10,7 @@
 #import "NSMutableArray+Shuffling.h"
 
 @interface PuzzleData()
-@property NSArray *tiles2DArr;
+@property NSArray *tilesArray;
 @end
 
 @implementation PuzzleData
@@ -20,7 +20,6 @@
         
         self.rowCount = rowCount;
         self.colCount = colCount;
-     
         [self initData];
     }
     return self;
@@ -49,12 +48,12 @@
         }
         [tiles2DArr addObject:tiles];
     }
-    self.tiles2DArr = tiles2DArr;
+    self.tilesArray = tiles2DArr;
 }
 
 - (void)randomiseTiles {
     for(int i=0; i<self.rowCount; i++) {
-        [((NSMutableArray*)[self.tiles2DArr objectAtIndex:i]) shuffle];
+        [((NSMutableArray*)[self.tilesArray objectAtIndex:i]) shuffle];
     }
 
     for(int i=0; i<self.rowCount; i++) {
@@ -67,9 +66,8 @@
 
 - (Tile*)emptyTile {
     for(int i=0; i<self.rowCount; i++) {
-        NSArray *tiles = [self.tiles2DArr objectAtIndex:i];
-        for(int j=0; j<self.rowCount; j++) {
-            Tile *tile = [tiles objectAtIndex:j];
+        for(int j=0; j<self.colCount; j++) {
+            Tile *tile = [self tileAtRow:i col:j];
             if(tile.isEmpty) {
                 return tile;
             }
@@ -79,11 +77,9 @@
 }
 
 - (Tile*)tileFromTouchPoint:(CGPoint)point {
-    for(int i=0; i<self.tiles2DArr.count; i++) {
-        NSArray *tiles = [self.tiles2DArr objectAtIndex:i];
-        
-        for(int j=0; j<tiles.count; j++) {
-            Tile *tile = (Tile*)[tiles objectAtIndex:j];
+    for(int i=0; i<self.rowCount; i++) {
+        for(int j=0; j<self.colCount; j++) {
+            Tile *tile = [self tileAtRow:i col:j];
             if(CGRectContainsPoint(tile.coordinateInView, point)) {
                 return tile;
             }
@@ -93,16 +89,25 @@
 }
 
 - (Tile*)tileAtRow:(NSInteger)row col:(NSInteger)col {
-    if([self pointWithinBounds:CGPointMake(row, col)]) {
-        return [[self.tiles2DArr objectAtIndex:row]objectAtIndex:col];
+    if([self isPointWithinBounds:CGPointMake(row, col)]) {
+        return [[self.tilesArray objectAtIndex:row]objectAtIndex:col];
     }
     return nil;
 }
 
-- (BOOL)pointWithinBounds:(CGPoint)point {
+- (BOOL)isPointWithinBounds:(CGPoint)point {
     BOOL xInBound = point.x >= 0 && point.x < self.rowCount;
     BOOL yInBound = point.y >= 0 && point.y < self.colCount;
     return xInBound && yInBound;
+}
+
+- (MoveDirection)findMoveForTile:(Tile*)tile {
+    for(int dir=MoveDirectionTop; dir<=MoveDirectionLeft; dir++) {
+        if([self canMoveTile:tile toDirection:dir]) {
+            return dir;
+        }
+    }
+    return MoveDirectionNone;
 }
 
 - (BOOL)canMoveTile:(Tile*)tile toDirection:(MoveDirection)direction {
@@ -127,7 +132,7 @@
     }
     // can move if there is empty tile at coordinate
     CGPoint destPoint = CGPointMake(x, y);
-    if([self pointWithinBounds:destPoint]) {
+    if([self isPointWithinBounds:destPoint]) {
         return CGPointEqualToPoint(destPoint, [self emptyTile].locationInArray);
     }
     return NO;
@@ -159,3 +164,4 @@
 }
 
 @end
+

@@ -10,26 +10,15 @@
 
 @implementation ImageUtil
 
-+ (UIImage*)cropimage:(UIImage*)originalImage inRect:(CGRect)rect/** resizeTo:(CGSize)size **/{
++ (UIImage*)cropimage:(UIImage*)originalImage inRect:(CGRect)rect {
     // first crop
     CGImageRef imageRef = CGImageCreateWithImageInRect([originalImage CGImage], rect);
     UIImage *croppedImage = [UIImage imageWithCGImage:imageRef];
     return croppedImage;
-    
-    // then resize
-    //    CGRect newFrame = CGRectMake(0, 0, size.width, size.height);
-    //    UIGraphicsBeginImageContext(newFrame.size);
-    //    [croppedImage drawInRect:newFrame];
-    //
-    //    UIImage *scaledImg = UIGraphicsGetImageFromCurrentImageContext();
-    //    UIGraphicsEndImageContext();
-    //
-    //    return [UIImage imageWithCGImage:[scaledImg CGImage]];
 }
 
-
 /**
- Cut images into given number of row and column. Assume row count == col count.
+ Cut up images into given number of row and column.
  **/
 + (NSArray*)makeTilesFromImage:(NSString*)imageName rowCount:(NSInteger)rowCount colCount:(NSInteger)colCount {
     
