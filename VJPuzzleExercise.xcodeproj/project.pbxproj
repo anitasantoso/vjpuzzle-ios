@@ -26,6 +26,7 @@
 		08483E201841EDF5009B3777 /* PuzzleData.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E1F1841EDF5009B3777 /* PuzzleData.m */; };
 		08483E261841FED7009B3777 /* NSMutableArray+Shuffling.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E251841FED7009B3777 /* NSMutableArray+Shuffling.m */; };
 		08483E2A18420378009B3777 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08483E2818420378009B3777 /* Main.storyboard */; };
+		08483E30184216BE009B3777 /* TileSwipeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E2F184216BE009B3777 /* TileSwipeEvent.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,8 @@
 		08483E251841FED7009B3777 /* NSMutableArray+Shuffling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+Shuffling.m"; sourceTree = "<group>"; };
 		08483E271841FFC8009B3777 /* NSMutableArray+Shuffling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+Shuffling.h"; sourceTree = "<group>"; };
 		08483E2918420378009B3777 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		08483E2E184216BE009B3777 /* TileSwipeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileSwipeEvent.h; sourceTree = "<group>"; };
+		08483E2F184216BE009B3777 /* TileSwipeEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TileSwipeEvent.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +145,8 @@
 				08483E1F1841EDF5009B3777 /* PuzzleData.m */,
 				08483E251841FED7009B3777 /* NSMutableArray+Shuffling.m */,
 				08483E271841FFC8009B3777 /* NSMutableArray+Shuffling.h */,
+				08483E2E184216BE009B3777 /* TileSwipeEvent.h */,
+				08483E2F184216BE009B3777 /* TileSwipeEvent.m */,
 			);
 			path = VJPuzzleExercise;
 			sourceTree = "<group>";
@@ -276,6 +281,7 @@
 				08483DF818417CF8009B3777 /* ViewController.m in Sources */,
 				08483E201841EDF5009B3777 /* PuzzleData.m in Sources */,
 				08483DF218417CF8009B3777 /* AppDelegate.m in Sources */,
+				08483E30184216BE009B3777 /* TileSwipeEvent.m in Sources */,
 				08483DEE18417CF8009B3777 /* main.m in Sources */,
 				08483E1818417D84009B3777 /* Tile.m in Sources */,
 				08483E261841FED7009B3777 /* NSMutableArray+Shuffling.m in Sources */,

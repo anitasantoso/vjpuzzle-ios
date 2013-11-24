@@ -9,6 +9,7 @@
 #import "ViewController.h"
 #import "ImageUtil.h"
 #import "PuzzleData.h"
+#import "TileSwipeEvent.h"
 
 #define kNumOfRows 4
 #define kNumOfCols 4
@@ -16,7 +17,7 @@
 @interface ViewController ()
 @property (nonatomic, strong) UIView *puzzleView;
 @property (nonatomic, strong) PuzzleData *data;
-@property (nonatomic, strong) Tile *movedTile;
+@property (nonatomic, strong) TileSwipeEvent *swipe;
 @end
 
 @implementation ViewController
@@ -97,8 +98,10 @@
 - (MoveDirection)directionFromVelocity:(CGPoint)velocity {
     
     // TODO smoothen vector?
-    if(velocity.x > 0 && velocity.y > 0) {
-        if(fabs(velocity.x) > fabs(velocity.y)) {
+    CGFloat absX = fabs(velocity.x);
+    CGFloat absY = fabs(velocity.y);
+    if(absX > 0.0 && absY > 0.0) {
+        if(absX > absY) {
             velocity.y = 0;
         } else {
             velocity.x = 0;
@@ -123,43 +126,50 @@
     
     //start drag
     if(drag.state == UIGestureRecognizerStateBegan) {
-        self.movedTile = [self.data tileFromTouchPoint:[drag locationInView:self.puzzleView]];
+        self.swipe = [[TileSwipeEvent alloc]init];
+        self.swipe.movedTile = [self.data tileFromTouchPoint:[drag locationInView:self.puzzleView]];
         return;
     }
-    
-    // check if moving to an empty slot
-    CGPoint velocity = [drag velocityInView:self.view];
-    MoveDirection direction = [self directionFromVelocity:velocity];
-    BOOL canMove = [self.data canMoveTile:self.movedTile toDirection:direction];
-    NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
-    
+
     // dragging
-    if(drag.state == UIGestureRecognizerStateChanged && canMove) {
-        CGPoint translation = [drag translationInView:self.view];
-        UIView *view = [self.puzzleView viewWithTag:100+self.movedTile.index];
+    if(drag.state == UIGestureRecognizerStateChanged) {
         
-        CGFloat destX = view.center.x;
-        CGFloat destY = view.center.y;
-        if(direction == MoveDirectionLeft || direction == MoveDirectionRight) {
-            destX += translation.x;
-        } else {
-            destY += translation.y;
+        if(!self.swipe.initialised) {
+            // check if moving to an empty slot
+            CGPoint velocity = [drag velocityInView:self.view];
+            self.swipe.direction = [self directionFromVelocity:velocity];
+            self.swipe.canMove = [self.data canMoveTile:self.swipe.movedTile toDirection:self.swipe.direction];
+            self.swipe.initialised = YES;
         }
-        [UIView animateWithDuration:0.2 animations:^{
-            view.center = CGPointMake(destX, destY);
-        }];
-        [drag setTranslation:CGPointMake(0, 0) inView:self.view];
+//        NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
+    
+        if(self.swipe.canMove) {
+            CGPoint translation = [drag translationInView:self.view];
+            UIView *view = [self.puzzleView viewWithTag:100+self.swipe.movedTile.index];
+            
+            CGFloat destX = view.center.x;
+            CGFloat destY = view.center.y;
+            if(self.swipe.direction == MoveDirectionLeft || self.swipe.direction == MoveDirectionRight) {
+                destX += translation.x;
+            } else {
+                destY += translation.y;
+            }
+            [UIView animateWithDuration:0.1 animations:^{
+                view.center = CGPointMake(destX, destY);
+            }];
+            [drag setTranslation:CGPointMake(0, 0) inView:self.view];
+        }
     }
     // end drag
     else if(drag.state == UIGestureRecognizerStateEnded) {
         
-        [self.data swapTileLocation:self.movedTile withTile:[self.data emptyTile]];
-        
-        [UIView animateWithDuration:0.2 animations:^{
-            [self.puzzleView viewWithTag:100+self.movedTile.index].frame = self.movedTile.coordinateInView;
-        }];
-        
-        self.movedTile = nil;
+        if(self.swipe.canMove) {
+            [self.data swapTileLocation:self.swipe.movedTile withTile:[self.data emptyTile]];
+            [UIView animateWithDuration:0.1 animations:^{
+                [self.puzzleView viewWithTag:100+self.swipe.movedTile.index].frame = self.swipe.movedTile.coordinateInView;
+            }];
+        }
+        self.swipe = nil;
         
         if([self.data isPuzzleSolved]) {
             [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
