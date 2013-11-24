@@ -142,7 +142,7 @@
     tile1.coordinateInView = tile2.coordinateInView;
     
     tile2.locationInArray = locInArray;
-    tile2.coordinateInView =coordInView;
+    tile2.coordinateInView = coordInView;
 }
 
 - (BOOL)isPuzzleSolved {

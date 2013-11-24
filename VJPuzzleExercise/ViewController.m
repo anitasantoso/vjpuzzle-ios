@@ -124,27 +124,41 @@
     //start drag
     if(drag.state == UIGestureRecognizerStateBegan) {
         self.movedTile = [self.data tileFromTouchPoint:[drag locationInView:self.puzzleView]];
+        return;
     }
     
+    // check if moving to an empty slot
+    CGPoint velocity = [drag velocityInView:self.view];
+    MoveDirection direction = [self directionFromVelocity:velocity];
+    BOOL canMove = [self.data canMoveTile:self.movedTile toDirection:direction];
+    NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
+    
+    // dragging
+    if(drag.state == UIGestureRecognizerStateChanged && canMove) {
+        CGPoint translation = [drag translationInView:self.view];
+        UIView *view = [self.puzzleView viewWithTag:100+self.movedTile.index];
+        
+        CGFloat destX = view.center.x;
+        CGFloat destY = view.center.y;
+        if(direction == MoveDirectionLeft || direction == MoveDirectionRight) {
+            destX += translation.x;
+        } else {
+            destY += translation.y;
+        }
+        [UIView animateWithDuration:0.2 animations:^{
+            view.center = CGPointMake(destX, destY);
+        }];
+        [drag setTranslation:CGPointMake(0, 0) inView:self.view];
+    }
     // end drag
     else if(drag.state == UIGestureRecognizerStateEnded) {
         
-        if(!self.movedTile.isEmpty) {
-            CGPoint velocity = [drag velocityInView:self.view];
-            
-            // check if moving to an empty slot
-            MoveDirection direction = [self directionFromVelocity:velocity];
-            BOOL canMove = [self.data canMoveTile:self.movedTile toDirection:direction];
-            NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
-            
-            if(canMove) {
-                [self.data swapTileLocation:self.movedTile withTile:[self.data emptyTile]];
-                
-                [UIView animateWithDuration:0.5 animations:^{
-                    [self.puzzleView viewWithTag:100+self.movedTile.index].frame = self.movedTile.coordinateInView;
-                }];
-            }
-        }
+        [self.data swapTileLocation:self.movedTile withTile:[self.data emptyTile]];
+        
+        [UIView animateWithDuration:0.2 animations:^{
+            [self.puzzleView viewWithTag:100+self.movedTile.index].frame = self.movedTile.coordinateInView;
+        }];
+        
         self.movedTile = nil;
         
         if([self.data isPuzzleSolved]) {
