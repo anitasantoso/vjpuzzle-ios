@@ -24,6 +24,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    if ([self respondsToSelector:@selector(edgesForExtendedLayout)]) {
+        self.edgesForExtendedLayout = UIRectEdgeNone;
+    }
+    
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Solve" style:UIBarButtonItemStyleBordered target:self action:@selector(solveButtonPressed:)];
     
     self.data = [[PuzzleData alloc]initWithRowCount:kNumOfRows colCount:kNumOfRows];
     self.view.backgroundColor = [UIColor whiteColor];
@@ -33,15 +38,21 @@
     self.puzzleView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, puzzleWidth, puzzleWidth)];
     [self.view addSubview:self.puzzleView];
     
-    // solve button
-    UIButton *btn = [UIButton alloc]initWithFrame:CGREc
-    
     // register gesture recognizer to container view
     UIPanGestureRecognizer *drag = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tileDragged:)];
     [self.puzzleView addGestureRecognizer:drag];
  
     [self.data randomiseTiles];
     [self layoutTileImages];
+}
+
+- (void)solveButtonPressed:(id)sender {
+    // TODO
+    for(UIView *view in [self.puzzleView subviews]) {
+        [view removeFromSuperview];
+    }
+    // self.data solve
+    // [self layoutTileImages]
 }
 
 - (void)layoutTileImages {
@@ -73,7 +84,7 @@
             }
             imgView.layer.borderWidth = 1.0;
             imgView.layer.borderColor = [UIColor blackColor].CGColor;
-            imgView.tag = tile.index;
+            imgView.tag = 100+tile.index;
              
             [self.puzzleView addSubview:imgView];
             x += tileWidth;
@@ -86,6 +97,13 @@
 - (MoveDirection)directionFromVelocity:(CGPoint)velocity {
     
     // TODO smoothen vector?
+    if(velocity.x > 0 && velocity.y > 0) {
+        if(fabs(velocity.x) > fabs(velocity.y)) {
+            velocity.y = 0;
+        } else {
+            velocity.x = 0;
+        }
+    }
     
     MoveDirection direction;
     if(velocity.x > 0) {
@@ -110,19 +128,22 @@
     
     // end drag
     else if(drag.state == UIGestureRecognizerStateEnded) {
-        CGPoint velocity = [drag velocityInView:self.view];
         
-        // check if moving to an empty slot
-        MoveDirection direction = [self directionFromVelocity:velocity];
-        BOOL canMove = [self.data canMoveTile:self.movedTile toDirection:direction];
-        NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
-
-        if(canMove) {
-            [self.data swapTileLocation:self.movedTile withTile:[self.data emptyTile]];
-
-            [UIView animateWithDuration:0.5 animations:^{
-                [self.puzzleView viewWithTag:self.movedTile.index].frame = self.movedTile.coordinateInView;
-            }];
+        if(!self.movedTile.isEmpty) {
+            CGPoint velocity = [drag velocityInView:self.view];
+            
+            // check if moving to an empty slot
+            MoveDirection direction = [self directionFromVelocity:velocity];
+            BOOL canMove = [self.data canMoveTile:self.movedTile toDirection:direction];
+            NSLog(@"%@", [NSString stringWithFormat:@"Can move: %d", canMove]);
+            
+            if(canMove) {
+                [self.data swapTileLocation:self.movedTile withTile:[self.data emptyTile]];
+                
+                [UIView animateWithDuration:0.5 animations:^{
+                    [self.puzzleView viewWithTag:100+self.movedTile.index].frame = self.movedTile.coordinateInView;
+                }];
+            }
         }
         self.movedTile = nil;
         

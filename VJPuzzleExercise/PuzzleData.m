@@ -60,7 +60,7 @@
     for(int i=0; i<self.rowCount; i++) {
         for(int j=0; j<self.colCount; j++) {
             Tile *tile = [self tileAtRow:i col:j];
-            tile.locationInArray = CGPointMake(i, j);
+            tile.locationInArray = CGPointMake(j, i);
         }
     }
 }
