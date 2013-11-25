@@ -105,7 +105,7 @@
 - (CGFloat)animDurationFromVelocity:(CGPoint)velocity {
     velocity = [self refineVelocity:velocity];
     CGFloat value = velocity.x > 0? velocity.x : velocity.y;
-    return (ABS(value)*.0002)+.2;
+    return (ABS(value)*.0002)+.7;
 }
 
 - (MoveDirection)directionFromVelocity:(CGPoint)velocity {
