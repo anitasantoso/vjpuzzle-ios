@@ -10,7 +10,7 @@
 #import "NSMutableArray+Shuffling.h"
 
 @interface PuzzleData()
-@property NSArray *tilesArray;
+@property NSMutableArray *tiles;
 @end
 
 @implementation PuzzleData
@@ -28,19 +28,15 @@
 - (void)initData {
     
     // construct data structure
-    NSMutableArray *tiles2DArr = [NSMutableArray arrayWithCapacity:self.rowCount];
+    NSMutableArray *tiles = [NSMutableArray arrayWithCapacity:self.rowCount*self.colCount];
     NSInteger index = 0;
     
     for(int row=0; row<self.rowCount; row++) {
-        
-        NSMutableArray *tiles = [NSMutableArray arrayWithCapacity:self.colCount];
         for(int col=0; col<self.colCount; col++) {
             
             Tile *tile = [[Tile alloc]init];
             tile.index = index++;
-            
-            // location is (x, y) == (row, col)
-            tile.locationInArray = CGPointMake(row, col);
+            tile.locationInGrid = CGPointMake(row, col);
             
             // if last tile
             if(row == self.rowCount-1 && col == self.colCount-1) {
@@ -48,43 +44,35 @@
             }
             [tiles addObject:tile];
         }
-        [tiles2DArr addObject:tiles];
     }
-    self.tilesArray = tiles2DArr;
+    self.tiles = tiles;
 }
 
 - (void)randomiseTiles {
-    for(int row=0; row<self.rowCount; row++) {
-        [((NSMutableArray*)[self.tilesArray objectAtIndex:row]) shuffle];
-    }
+    [self.tiles shuffle];
 
+    int index = 0;
     for(int row=0; row<self.rowCount; row++) {
         for(int col=0; col<self.colCount; col++) {
-            Tile *tile = [self tileAtRow:row col:col];
-            tile.locationInArray = CGPointMake(row, col);
+            Tile *tile = [self.tiles objectAtIndex:index++];
+            tile.locationInGrid = CGPointMake(row, col);
         }
     }
 }
 
 - (Tile*)emptyTile {
-    for(int row=0; row<self.rowCount; row++) {
-        for(int col=0; col<self.colCount; col++) {
-            Tile *tile = [self tileAtRow:row col:col];
-            if(tile.isEmpty) {
-                return tile;
-            }
+    for(Tile *tile in self.tiles) {
+        if(tile.isEmpty) {
+            return tile;
         }
     }
     return nil;
 }
 
 - (Tile*)tileFromTouchPoint:(CGPoint)point {
-    for(int row=0; row<self.rowCount; row++) {
-        for(int col=0; col<self.colCount; col++) {
-            Tile *tile = [self tileAtRow:row col:col];
-            if(CGRectContainsPoint(tile.coordinateInView, point)) {
-                return tile;
-            }
+    for(Tile *tile in self.tiles) {
+        if(CGRectContainsPoint(tile.coordinateInView, point)) {
+            return tile;
         }
     }
     return nil;
@@ -92,7 +80,11 @@
 
 - (Tile*)tileAtRow:(NSInteger)row col:(NSInteger)col {
     if([self _isPointWithinBounds:CGPointMake(row, col)]) {
-        return [[self.tilesArray objectAtIndex:row]objectAtIndex:col];
+        for(Tile *tile in self.tiles) {
+            if(tile.locationInGrid.x == row && tile.locationInGrid.y == col) {
+                return tile;
+            }
+        }
     }
     return nil;
 }
@@ -133,8 +125,8 @@
 }
 
 - (Tile*)_adjacentTileTo:(Tile*)tile inDirection:(MoveDirection)direction {
-    NSInteger x = tile.locationInArray.x;
-    NSInteger y = tile.locationInArray.y;
+    NSInteger x = tile.locationInGrid.x;
+    NSInteger y = tile.locationInGrid.y;
     
     switch (direction) {
         case MoveDirectionLeft:
@@ -164,26 +156,25 @@
 
 // TODO no need for emptyTile arg
 - (void)moveTile:(Tile*)tile {
-    CGPoint locInArray = tile.locationInArray;
+    CGPoint locInGrid = tile.locationInGrid;
     CGRect coordInView = tile.coordinateInView;
    
     Tile *emptyTile = [self emptyTile];
     
-    tile.locationInArray = emptyTile.locationInArray;
+    tile.locationInGrid = emptyTile.locationInGrid;
     tile.coordinateInView = emptyTile.coordinateInView;
  
-    emptyTile.locationInArray = locInArray;
+    emptyTile.locationInGrid = locInGrid;
     emptyTile.coordinateInView = coordInView;
+    
+    emptyTile = [self emptyTile];
 }
 
 - (BOOL)isPuzzleSolved {
     NSInteger index = 0;
-    for(int row=0; row<self.rowCount; row++) {
-        for(int col=0; col<self.colCount; col++) {
-            Tile *tile = [self tileAtRow:row col:col];
-            if(tile.index != index++) {
-                return NO;
-            }
+    for(Tile *tile in self.tiles) {
+        if(tile.index != index++) {
+            return NO;
         }
     }
     return YES;

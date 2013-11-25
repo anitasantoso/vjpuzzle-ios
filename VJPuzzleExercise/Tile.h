@@ -14,7 +14,7 @@ typedef enum {
 
 @interface Tile : NSObject
 
-@property CGPoint locationInArray; // i && j
+@property CGPoint locationInGrid; 
 @property CGRect coordinateInView; // frame in view
 
 @property NSInteger index;

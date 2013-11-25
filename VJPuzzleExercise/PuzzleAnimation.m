@@ -8,10 +8,31 @@
 
 #import "PuzzleAnimation.h"
 
+//#define CGRectCalcArea(CGRect frame)
+
 #define kTapAnimDuration 0.2
 #define kSwipeAnimDuration 0.1
 
 @implementation PuzzleAnimation
+
++ (void)autoCompleteMoveOfView:(UIView*)view sourceLoc:(CGRect)sourceLoc toDestLoc:(CGRect)destLoc currentLoc:(CGRect)currLoc completion:(void (^)(void))completion {
+    CGRect intersect = CGRectIntersection(currLoc, destLoc);
+    
+    // TODO define macro?
+    CGFloat intersectArea = CGRectGetHeight(intersect)*CGRectGetWidth(intersect);
+    CGFloat destArea = CGRectGetHeight(destLoc)*CGRectGetWidth(destLoc);
+    
+    // if more than half way through
+    BOOL moveComplete = intersectArea/destArea > 0.5;
+    CGRect finalLoc = moveComplete? destLoc : sourceLoc;
+    [UIView animateWithDuration:kSwipeAnimDuration animations:^{
+        view.frame = finalLoc;
+    } completion:^(BOOL finished) {
+        if(moveComplete) {
+            completion();
+        }
+    }];
+}
 
 + (void)moveViewOrigin:(UIView*)view toPoint:(CGPoint)point {
     [UIView animateWithDuration:kSwipeAnimDuration animations:^{
@@ -23,7 +44,7 @@
 }
 
 // move a block of views
-+ (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction completion:(void (^)(BOOL finished))completion {
++ (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction {
     
     // move along either horizontaly or vertically
     [UIView animateWithDuration:kSwipeAnimDuration animations:^{
@@ -37,19 +58,11 @@
             }
             view.center = CGPointMake(destX, destY);
         }
-    } completion:^(BOOL finished) {
-        if(completion) {
-            completion(finished);
-        }
     }];
 }
 
-+ (void)moveView:(UIView*)view WithTranslation:(CGPoint)translation direction:(MoveDirection)direction completion:(void (^)(BOOL finished))completion {
-    [PuzzleAnimation moveViews:@[view] WithTranslation:translation direction:direction completion:completion];
-}
-
 + (void)moveView:(UIView*)view WithTranslation:(CGPoint)translation direction:(MoveDirection)direction {
-    [PuzzleAnimation moveView:view WithTranslation:translation direction:direction completion:nil];
+    [PuzzleAnimation moveViews:@[view] WithTranslation:translation direction:direction];
 }
 
 @end

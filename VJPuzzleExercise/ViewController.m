@@ -61,7 +61,7 @@
     [self.puzzleView addGestureRecognizer:tap];
     
     // shuffle then layout tiles
-//    [self.data randomiseTiles];
+    [self.data randomiseTiles];
     [self layoutTilesWithImageName:@"globe.jpg"];
 }
 
@@ -134,7 +134,7 @@
         [self.data moveTile:tile];
         
         // redraw
-        UIView *view = [self.puzzleView viewWithTag:kTileTag+tile.index];
+        UIView *view = [self viewForTile:self.swipe.movedTile];
         [PuzzleAnimation moveViewOrigin:view toPoint:tile.coordinateInView.origin];
     }
 }
@@ -161,7 +161,7 @@
         }
         
         if(self.swipe.canMove) {
-            UIView *view = [self.puzzleView viewWithTag:kTileTag+self.swipe.movedTile.index];
+            UIView *view = [self viewForTile:self.swipe.movedTile];
             CGPoint translation = [drag translationInView:self.view];
             
             [PuzzleAnimation moveView:view WithTranslation:translation direction:self.swipe.direction];
@@ -172,18 +172,25 @@
     else if(drag.state == UIGestureRecognizerStateEnded) {
         
         // TODO check if half way move???
-        if(self.swipe.canMove) {
-            [self.data moveTile:self.swipe.movedTile];
-            [UIView animateWithDuration:0.2 animations:^{
-                [self.puzzleView viewWithTag:kTileTag+self.swipe.movedTile.index].frame = self.swipe.movedTile.coordinateInView;
+        if(self.swipe.initialised && self.swipe.canMove) {
+            
+            UIView *view = [self viewForTile:self.swipe.movedTile];
+            [PuzzleAnimation autoCompleteMoveOfView:view sourceLoc:self.swipe.movedTile.coordinateInView toDestLoc:[self.data emptyTile].coordinateInView currentLoc:view.frame completion:^{
+                
+                // if move completed, set new tile location
+                [self.data moveTile:self.swipe.movedTile];
+                self.swipe = nil;
             }];
         }
-        self.swipe = nil;
         
-        if([self.data isPuzzleSolved]) {
-            [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
-        }
+//        if([self.data isPuzzleSolved]) {
+//            [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
+//        }
     }
+}
+
+- (UIView*)viewForTile:(Tile*)tile {
+    return [self.puzzleView viewWithTag:kTileTag+tile.index];
 }
 
 @end
