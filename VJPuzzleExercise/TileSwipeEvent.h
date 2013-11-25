@@ -15,4 +15,7 @@
 @property MoveDirection direction;
 @property BOOL canMove;
 @property BOOL initialised;
+@property NSArray *blockTiles;
+
+- (BOOL)isBlockMove;
 @end

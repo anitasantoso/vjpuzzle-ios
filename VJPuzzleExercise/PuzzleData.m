@@ -103,31 +103,50 @@
     return MoveDirectionNone;
 }
 
+- (BOOL)isBlockMove:(Tile*)tile {
+    NSInteger distanceX = abs(self.emptyTile.locationInGrid.x-tile.locationInGrid.x);
+    NSInteger distanceY = abs(self.emptyTile.locationInGrid.y-tile.locationInGrid.y);
+    return distanceX > 1 || distanceY > 1;
+}
+
 - (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction {
-    return [self canMoveTile:tile inDirection:direction allowBlockMove:NO]; /** TODO **/
+    return [self canMoveTile:tile inDirection:direction allowBlockMove:YES];
 }
 
 /**
- Allow a single tile to move? 
+ Check if a tile can move to certain direction. For tap gesture, no block move is allowed.
  **/
 - (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction allowBlockMove:(BOOL)allowBlockMove {
-    Tile *checkTile;
+    
     Tile *theTile = tile;
     do {
-        checkTile = [self _adjacentTileTo:theTile inDirection:direction];
+        Tile *checkTile = [self _nextTileTo:theTile inDirection:direction];
         if(checkTile.isEmpty) {
             return YES;
         }
         if(!allowBlockMove) {
-            return NO;
+            return NO; // break here if no block move
         }
         theTile = checkTile;
-    }
-    while(theTile != nil);
+    } while(theTile != nil);
     return NO;
 }
 
-- (Tile*)_adjacentTileTo:(Tile*)tile inDirection:(MoveDirection)direction {
+- (NSArray*)blockTilesNextTo:(Tile*)tile inDirection:(MoveDirection)direction {
+    NSMutableArray *tiles = [NSMutableArray arrayWithObject:tile];
+    Tile *currTile = tile;
+    while(true) {
+        Tile *nextTile = [self _nextTileTo:currTile inDirection:direction];
+        if(!nextTile || nextTile.isEmpty) {
+            break;
+        }
+        [tiles addObject:nextTile];
+        currTile = nextTile;
+    } 
+    return tiles;
+}
+
+- (Tile*)_nextTileTo:(Tile*)tile inDirection:(MoveDirection)direction {
     NSInteger x = tile.locationInGrid.x;
     NSInteger y = tile.locationInGrid.y;
     
@@ -151,26 +170,39 @@
 }
 
 /**
- TODO to move a block of tiles to an empty slot
+ Move a block of tiles to an empty slot
  **/
-- (void)moveTiles:(NSArray*)tiles toTile:(Tile*)emptyTile {
-    // TODO
+- (void)moveBlockOfTiles:(NSArray*)tiles  {
+    Tile *emptyTile = [self emptyTile];
+    
+    CGPoint lastLocInGrid = emptyTile.locationInGrid;
+    CGRect lastCoordInView = emptyTile.coordinateInView;
+    
+    CGPoint currLocInGrid;
+    CGRect currCoordInView;
+    
+    // work backwards
+    for(int i=tiles.count-1; i>=0; i--) {
+        Tile *tile = [tiles objectAtIndex:i];
+        
+        currLocInGrid = tile.locationInGrid;
+        currCoordInView = tile.coordinateInView;
+        
+        tile.locationInGrid = lastLocInGrid;
+        tile.coordinateInView = lastCoordInView;
+        
+        lastLocInGrid = currLocInGrid;
+        lastCoordInView = currCoordInView;
+    }
+    emptyTile.locationInGrid = currLocInGrid;
+    emptyTile.coordinateInView = currCoordInView;
 }
 
 /**
  Move tile to an empty slot
  **/
 - (void)moveTile:(Tile*)tile {
-    CGPoint locInGrid = tile.locationInGrid;
-    CGRect coordInView = tile.coordinateInView;
-   
-    Tile *emptyTile = [self emptyTile];
-    
-    tile.locationInGrid = emptyTile.locationInGrid;
-    tile.coordinateInView = emptyTile.coordinateInView;
- 
-    emptyTile.locationInGrid = locInGrid;
-    emptyTile.coordinateInView = coordInView;
+    [self moveBlockOfTiles:@[tile]];
 }
 
 - (BOOL)isPuzzleSolved {

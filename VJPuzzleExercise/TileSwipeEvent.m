@@ -10,4 +10,8 @@
 
 @implementation TileSwipeEvent
 
+- (BOOL)isBlockMove {
+    return self.blockTiles.count > 1;
+}
+
 @end

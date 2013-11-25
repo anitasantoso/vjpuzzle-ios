@@ -25,11 +25,6 @@
 
 @implementation ViewController
 
-/**
- TODO:
- - sliding multiple tiles at one move
- **/
- 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -155,44 +150,52 @@
         self.swipe.movedTile = [self.data tileFromTouchPoint:[drag locationInView:self.puzzleView]];
         return;
     }
-
     // dragging
     if(drag.state == UIGestureRecognizerStateChanged) {
         
-        // check if move is legal
+        // check if move is legal, initialise swipe event
         if(!self.swipe.initialised) {
-            CGPoint velocity = [drag velocityInView:self.view];
-            self.swipe.direction = [self directionFromVelocity:velocity];
-            self.swipe.canMove = [self.data canMoveTile:self.swipe.movedTile inDirection:self.swipe.direction];
-            self.swipe.initialised = YES;
+            [self initSwipeEvent:self.swipe fromGesture:drag];
         }
-        
-        if(self.swipe.canMove) {
-            UIView *view = [self viewForTile:self.swipe.movedTile];
-            CGPoint translation = [drag translationInView:self.view];
-            
-            // TODO TODO TODO if empty slot is not nearby, move the whole block!!!
-            
-            [PuzzleAnimation moveView:view WithTranslation:translation direction:self.swipe.direction];
-            [drag setTranslation:CGPointMake(0, 0) inView:self.view]; // TODO what's this?
-        }
+        [self animateGesture:drag moveTile:NO gestureEnd:NO];
     }
     // end drag
     else if(drag.state == UIGestureRecognizerStateEnded) {
-        
-        // TODO check if half way move???
-        if(self.swipe.initialised && self.swipe.canMove) {
-            
-            UIView *view = [self viewForTile:self.swipe.movedTile];
-            [PuzzleAnimation autoCompleteMoveOfView:view sourceLoc:self.swipe.movedTile.coordinateInView toDestLoc:[self.data emptyTile].coordinateInView currentLoc:view.frame completion:^{
-                
-                // if move completed, set new tile location
-                [self.data moveTile:self.swipe.movedTile];
-                self.swipe = nil;
-            }];
-        }
-        
+       
+        [self animateGesture:drag moveTile:YES gestureEnd:YES];
         [self checkIfPuzzleSolved];
+    }
+}
+
+- (void)initSwipeEvent:(TileSwipeEvent*)swipe fromGesture:(UIPanGestureRecognizer*)drag {
+    CGPoint velocity = [drag velocityInView:self.view];
+    MoveDirection direction = [self directionFromVelocity:velocity];
+    
+    // somehow swipe begin was not recognized?
+    if(!self.swipe.movedTile) {
+        self.swipe = nil;
+        return;
+    }
+    Tile *tile = self.swipe.movedTile;
+    self.swipe.direction = direction;
+    self.swipe.canMove = [self.data canMoveTile:tile inDirection:self.swipe.direction];
+    self.swipe.blockTiles = [self.data blockTilesNextTo:tile inDirection:direction];
+    self.swipe.initialised = YES;
+}
+
+- (void)animateGesture:(UIPanGestureRecognizer*)drag moveTile:(BOOL)moveTile gestureEnd:(BOOL)gestureEnd {
+    if(self.swipe.initialised && self.swipe.canMove) {
+        
+        NSArray *tiles = self.swipe.blockTiles;
+        NSArray *views = [self viewsForTiles:tiles];
+        CGPoint translation = [drag translationInView:self.view];
+        
+        [PuzzleAnimation moveViews:views WithTranslation:translation direction:self.swipe.direction startBounds:((Tile*)[tiles firstObject]).coordinateInView endBounds:self.data.emptyTile.coordinateInView completion:^{
+            [self.data moveBlockOfTiles:tiles];
+            NSLog(@"Need to move tile location now");
+            self.swipe = nil;
+        } gestureEnd:gestureEnd];
+        [drag setTranslation:CGPointMake(0, 0) inView:self.view]; // reset translation
     }
 }
 
@@ -201,6 +204,14 @@
         [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
         self.puzzleView.userInteractionEnabled = NO;
     }
+}
+
+- (NSArray*)viewsForTiles:(NSArray*)tiles {
+    NSMutableArray *views = [NSMutableArray arrayWithCapacity:tiles.count];
+    for(Tile *tile in tiles) {
+        [views addObject:[self viewForTile:tile]];
+    }
+    return views;
 }
 
 - (UIView*)viewForTile:(Tile*)tile {
