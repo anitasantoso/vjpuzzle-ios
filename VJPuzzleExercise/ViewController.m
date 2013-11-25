@@ -12,8 +12,8 @@
 #import "TileSwipeEvent.h"
 #import "PuzzleAnimation.h"
 
-#define kNumOfRows 3
-#define kNumOfCols 3
+#define kNumOfRows 4
+#define kNumOfCols 4
 
 #define kTileTag 100
 
