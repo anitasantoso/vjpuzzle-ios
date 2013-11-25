@@ -192,7 +192,6 @@
         
         [PuzzleAnimation moveViews:views WithTranslation:translation direction:self.swipe.direction startBounds:((Tile*)[tiles firstObject]).coordinateInView endBounds:self.data.emptyTile.coordinateInView completion:^{
             [self.data moveBlockOfTiles:tiles];
-            NSLog(@"Need to move tile location now");
             self.swipe = nil;
         } gestureEnd:gestureEnd];
         [drag setTranslation:CGPointMake(0, 0) inView:self.view]; // reset translation
