@@ -38,9 +38,8 @@
     }
 
     // allow user to select random image
-    //    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"New Image" style:UIBarButtonItemStyleBordered target:self action:@selector(selImageButtonPressed:)];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]initWithTitle:@"Start Over" style:UIBarButtonItemStyleBordered target:self action:@selector(startButtonPressed:)];
 
-    self.data = [[PuzzleData alloc]initWithRowCount:kNumOfRows colCount:kNumOfCols];
     self.view.backgroundColor = [UIColor whiteColor];
     
     // initialise container view - it's a square
@@ -56,9 +55,21 @@
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTap:)];
     [self.puzzleView addGestureRecognizer:tap];
     
+    [self createDefaultPuzzle];
+}
+
+- (void)createDefaultPuzzle {
     // shuffle then layout tiles
+    self.data = [[PuzzleData alloc]initWithRowCount:kNumOfRows colCount:kNumOfCols];
     [self.data randomiseTiles];
     [self layoutTilesWithImageName:@"globe.jpg"];
+}
+
+- (void)startButtonPressed:(id)sender {
+    for(UIView *view in self.puzzleView.subviews) {
+        [view removeFromSuperview];
+    }
+    [self createDefaultPuzzle];
 }
 
 - (void)layoutTilesWithImageName:(NSString*)imageName {
@@ -130,6 +141,7 @@
         UIView *view = [self viewForTile:tile];
         [PuzzleAnimation moveView:view toDestLoc:[self.data emptyTile].coordinateInView completion:^{
             [self.data moveTile:tile];
+            [self checkIfPuzzleSolved];
         }];
     }
 }
@@ -159,6 +171,8 @@
             UIView *view = [self viewForTile:self.swipe.movedTile];
             CGPoint translation = [drag translationInView:self.view];
             
+            // TODO TODO TODO if empty slot is not nearby, move the whole block!!!
+            
             [PuzzleAnimation moveView:view WithTranslation:translation direction:self.swipe.direction];
             [drag setTranslation:CGPointMake(0, 0) inView:self.view]; // TODO what's this?
         }
@@ -178,12 +192,14 @@
             }];
         }
         
-        if([self.data isPuzzleSolved]) {
-            [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
-            self.puzzleView.userInteractionEnabled = NO;
-            
-            // TODO start again
-        }
+        [self checkIfPuzzleSolved];
+    }
+}
+
+- (void)checkIfPuzzleSolved {
+    if([self.data isPuzzleSolved]) {
+        [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
+        self.puzzleView.userInteractionEnabled = NO;
     }
 }
 

@@ -20,7 +20,6 @@
 
 - (BOOL)isPuzzleSolved;
 
-- (BOOL)canMoveTiles:(NSArray*)tiles inDirection:(MoveDirection)direction;
 - (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction;
 
 - (void)randomiseTiles;

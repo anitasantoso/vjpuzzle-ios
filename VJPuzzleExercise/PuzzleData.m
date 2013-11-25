@@ -96,31 +96,35 @@
 
 - (MoveDirection)findMoveForTile:(Tile*)tile {
     for(int dir=MoveDirectionTop; dir<=MoveDirectionLeft; dir++) {
-        if([self canMoveTile:tile inDirection:dir]) {
+        if([self canMoveTile:tile inDirection:dir allowBlockMove:NO]) {
             return dir;
         }
     }
     return MoveDirectionNone;
 }
 
-/** 
- Allow a block of tiles to move?
- **/
-- (BOOL)canMoveTiles:(NSArray*)tiles inDirection:(MoveDirection)direction {
-    for(Tile *tile in tiles) {
-        if([self _adjacentTileTo:tile inDirection:direction].isEmpty) {
-            return YES;
-        }
-    }
-    return NO;
+- (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction {
+    return [self canMoveTile:tile inDirection:direction allowBlockMove:NO]; /** TODO **/
 }
 
 /**
  Allow a single tile to move? 
  **/
-- (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction {
-    Tile *possiblyEmptyTile = [self _adjacentTileTo:tile inDirection:direction];
-    return possiblyEmptyTile.isEmpty;
+- (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction allowBlockMove:(BOOL)allowBlockMove {
+    Tile *checkTile;
+    Tile *theTile = tile;
+    do {
+        checkTile = [self _adjacentTileTo:theTile inDirection:direction];
+        if(checkTile.isEmpty) {
+            return YES;
+        }
+        if(!allowBlockMove) {
+            return NO;
+        }
+        theTile = checkTile;
+    }
+    while(theTile != nil);
+    return NO;
 }
 
 - (Tile*)_adjacentTileTo:(Tile*)tile inDirection:(MoveDirection)direction {
@@ -171,9 +175,12 @@
 
 - (BOOL)isPuzzleSolved {
     NSInteger index = 0;
-    for(Tile *tile in self.tiles) {
-        if(tile.index != index++) {
-            return NO;
+    for(int row=0; row<self.rowCount; row++) {
+        for(int col=0; col<self.colCount; col++) {
+            Tile *tile = [self tileAtRow:row col:col];
+            if(tile.index != index++) {
+                return NO;
+            }
         }
     }
     return YES;
