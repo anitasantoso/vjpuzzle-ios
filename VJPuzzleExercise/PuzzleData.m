@@ -17,7 +17,6 @@
 
 - (id)initWithRowCount:(NSInteger)rowCount colCount:(NSInteger)colCount {
     if(self = [super init]) {
-        
         self.rowCount = rowCount;
         self.colCount = colCount;
         [self initData];
@@ -154,7 +153,9 @@
     // TODO
 }
 
-// TODO no need for emptyTile arg
+/**
+ Move tile to an empty slot
+ **/
 - (void)moveTile:(Tile*)tile {
     CGPoint locInGrid = tile.locationInGrid;
     CGRect coordInView = tile.coordinateInView;
@@ -166,8 +167,6 @@
  
     emptyTile.locationInGrid = locInGrid;
     emptyTile.coordinateInView = coordInView;
-    
-    emptyTile = [self emptyTile];
 }
 
 - (BOOL)isPuzzleSolved {

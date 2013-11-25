@@ -15,9 +15,6 @@
 #define kNumOfRows 3
 #define kNumOfCols 3
 
-#define kTapAnimDuration 0.2
-#define kSwipeAnimDuration 0.1
-
 #define kTileTag 100
 
 @interface ViewController ()
@@ -29,8 +26,7 @@
 @implementation ViewController
 
 /**
- TODO: 
- - if half way move, tile should revert back to original position
+ TODO:
  - sliding multiple tiles at one move
  **/
  
@@ -53,11 +49,11 @@
     [self.view addSubview:self.puzzleView];
     
     // pan gesture
-    UIPanGestureRecognizer *drag = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(tileWasDragged:)];
+    UIPanGestureRecognizer *drag = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(handlePan:)];
     [self.puzzleView addGestureRecognizer:drag];
  
     // tap gesture
-    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tileWasTapped:)];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTap:)];
     [self.puzzleView addGestureRecognizer:tap];
     
     // shuffle then layout tiles
@@ -124,22 +120,21 @@
     return direction;
 }
 
-- (void)tileWasTapped:(id)sender {
+- (void)handleTap:(id)sender {
 
     UITapGestureRecognizer *tap = (UITapGestureRecognizer*)sender;
     Tile *tile = [self.data tileFromTouchPoint:[tap locationInView:self.puzzleView]];
     MoveDirection dir = [self.data findMoveForTile:tile];
     
     if(dir != MoveDirectionNone) {
-        [self.data moveTile:tile];
-        
-        // redraw
-        UIView *view = [self viewForTile:self.swipe.movedTile];
-        [PuzzleAnimation moveViewOrigin:view toPoint:tile.coordinateInView.origin];
+        UIView *view = [self viewForTile:tile];
+        [PuzzleAnimation moveView:view toDestLoc:[self.data emptyTile].coordinateInView completion:^{
+            [self.data moveTile:tile];
+        }];
     }
 }
 
-- (void)tileWasDragged:(id)sender {
+- (void)handlePan:(id)sender {
     UIPanGestureRecognizer *drag = (UIPanGestureRecognizer*)sender;
     
     //start drag
@@ -183,9 +178,12 @@
             }];
         }
         
-//        if([self.data isPuzzleSolved]) {
-//            [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
-//        }
+        if([self.data isPuzzleSolved]) {
+            [[[UIAlertView alloc]initWithTitle:@"Hooray" message:@"Congratulations, you have completed the puzzle!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil]show];
+            self.puzzleView.userInteractionEnabled = NO;
+            
+            // TODO start again
+        }
     }
 }
 

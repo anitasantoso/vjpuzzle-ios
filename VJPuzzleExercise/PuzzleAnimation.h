@@ -13,7 +13,8 @@
 
 + (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction;
 + (void)moveView:(UIView*)view WithTranslation:(CGPoint)translation direction:(MoveDirection)direction;
-+ (void)moveViewOrigin:(UIView*)view toPoint:(CGPoint)point;
+
++ (void)moveView:(UIView*)view toDestLoc:(CGRect)destLoc completion:(void (^)(void))completion;
 
 + (void)autoCompleteMoveOfView:(UIView*)view sourceLoc:(CGRect)sourceLoc toDestLoc:(CGRect)destLoc currentLoc:(CGRect)currLoc completion:(void (^)(void))completion;
 @end

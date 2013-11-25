@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleAnimation.m"
-            timestampString = "407036670.618177"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "22"
-            endingLineNumber = "22"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
             landmarkName = "+autoCompleteMoveOfView:sourceLoc:toDestLoc:currentLoc:completion:"
             landmarkType = "5">
          </BreakpointContent>
@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleAnimation.m"
-            timestampString = "407036875.868836"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "21"
-            endingLineNumber = "21"
+            startingLineNumber = "18"
+            endingLineNumber = "18"
             landmarkName = "+autoCompleteMoveOfView:sourceLoc:toDestLoc:currentLoc:completion:"
             landmarkType = "5">
          </BreakpointContent>
@@ -42,11 +42,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleAnimation.m"
-            timestampString = "407036888.031464"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
             landmarkName = "+autoCompleteMoveOfView:sourceLoc:toDestLoc:currentLoc:completion:"
             landmarkType = "5">
          </BreakpointContent>
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleAnimation.m"
-            timestampString = "407036889.660132"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "31"
-            endingLineNumber = "31"
+            startingLineNumber = "28"
+            endingLineNumber = "28"
             landmarkName = "+autoCompleteMoveOfView:sourceLoc:toDestLoc:currentLoc:completion:"
             landmarkType = "5">
          </BreakpointContent>
@@ -74,12 +74,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/ViewController.m"
-            timestampString = "407037351.448651"
+            timestampString = "407037868.846916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "183"
-            endingLineNumber = "183"
-            landmarkName = "-tileWasDragged:"
+            startingLineNumber = "178"
+            endingLineNumber = "178"
+            landmarkName = "-handlePan:"
             landmarkType = "5">
             <Locations>
                <Location
@@ -134,12 +134,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/ViewController.m"
-            timestampString = "407037351.448651"
+            timestampString = "407037868.846916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "181"
-            endingLineNumber = "181"
-            landmarkName = "-tileWasDragged:"
+            startingLineNumber = "176"
+            endingLineNumber = "176"
+            landmarkName = "-handlePan:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -150,28 +150,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/ViewController.m"
-            timestampString = "407037144.092794"
+            timestampString = "407037868.846916"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
-            landmarkName = "-tileWasDragged:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "VJPuzzleExercise/ViewController.m"
-            timestampString = "407037159.756887"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "148"
-            endingLineNumber = "148"
-            landmarkName = "-tileWasDragged:"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "-handlePan:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -182,11 +166,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleData.m"
-            timestampString = "407037175.59163"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
             landmarkName = "-tileFromTouchPoint:"
             landmarkType = "5">
             <Locations>
@@ -197,11 +181,11 @@
                   symbolName = "-[PuzzleData tileFromTouchPoint:]"
                   moduleName = "VJPuzzleExercise"
                   urlString = "file://localhost/Users/Anita/jTribe%20Code/VJPuzzleExercise/VJPuzzleExercise/PuzzleData.m"
-                  timestampString = "407037231.6713"
+                  timestampString = "407037868.856462"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "73"
-                  endingLineNumber = "73"
+                  startingLineNumber = "72"
+                  endingLineNumber = "72"
                   offsetFromSymbolStart = "50">
                </Location>
                <Location
@@ -211,11 +195,11 @@
                   symbolName = "-[PuzzleData tileFromTouchPoint:]"
                   moduleName = "VJPuzzleExercise"
                   urlString = "file://localhost/Users/Anita/jTribe%20Code/VJPuzzleExercise/VJPuzzleExercise/PuzzleData.m"
-                  timestampString = "407037231.671687"
+                  timestampString = "407037868.856746"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "73"
-                  endingLineNumber = "73"
+                  startingLineNumber = "72"
+                  endingLineNumber = "72"
                   offsetFromSymbolStart = "438">
                </Location>
             </Locations>
@@ -228,11 +212,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleData.m"
-            timestampString = "407037182.284353"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "75"
-            endingLineNumber = "75"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
             landmarkName = "-tileFromTouchPoint:"
             landmarkType = "5">
          </BreakpointContent>
@@ -244,12 +228,28 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VJPuzzleExercise/PuzzleData.m"
-            timestampString = "407037183.34195"
+            timestampString = "407037665.929689"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "78"
-            endingLineNumber = "78"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
             landmarkName = "-tileFromTouchPoint:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VJPuzzleExercise/ViewController.m"
+            timestampString = "407037664.143948"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "125"
+            endingLineNumber = "125"
+            landmarkName = "-handleTap:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

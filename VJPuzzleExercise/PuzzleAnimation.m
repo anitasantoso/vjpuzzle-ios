@@ -8,10 +8,7 @@
 
 #import "PuzzleAnimation.h"
 
-//#define CGRectCalcArea(CGRect frame)
-
-#define kTapAnimDuration 0.2
-#define kSwipeAnimDuration 0.1
+#define kDefaultAnimDuration 0.1
 
 @implementation PuzzleAnimation
 
@@ -25,7 +22,7 @@
     // if more than half way through
     BOOL moveComplete = intersectArea/destArea > 0.5;
     CGRect finalLoc = moveComplete? destLoc : sourceLoc;
-    [UIView animateWithDuration:kSwipeAnimDuration animations:^{
+    [UIView animateWithDuration:kDefaultAnimDuration animations:^{
         view.frame = finalLoc;
     } completion:^(BOOL finished) {
         if(moveComplete) {
@@ -34,12 +31,11 @@
     }];
 }
 
-+ (void)moveViewOrigin:(UIView*)view toPoint:(CGPoint)point {
-    [UIView animateWithDuration:kSwipeAnimDuration animations:^{
-        CGRect frame = view.frame;
-        frame.origin.x = point.x;
-        frame.origin.y = point.y;
-        view.frame = frame;
++ (void)moveView:(UIView*)view toDestLoc:(CGRect)destLoc completion:(void (^)(void))completion {
+    [UIView animateWithDuration:kDefaultAnimDuration animations:^{
+        view.frame = destLoc;
+    } completion:^(BOOL finished) {
+        completion();
     }];
 }
 
@@ -47,7 +43,7 @@
 + (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction {
     
     // move along either horizontaly or vertically
-    [UIView animateWithDuration:kSwipeAnimDuration animations:^{
+    [UIView animateWithDuration:kDefaultAnimDuration animations:^{
         for(UIView *view in views) {
             CGFloat destX = view.center.x;
             CGFloat destY = view.center.y;
