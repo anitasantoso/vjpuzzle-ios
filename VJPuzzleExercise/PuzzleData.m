@@ -103,12 +103,6 @@
     return MoveDirectionNone;
 }
 
-- (BOOL)isBlockMove:(Tile*)tile {
-    NSInteger distanceX = abs(self.emptyTile.locationInGrid.x-tile.locationInGrid.x);
-    NSInteger distanceY = abs(self.emptyTile.locationInGrid.y-tile.locationInGrid.y);
-    return distanceX > 1 || distanceY > 1;
-}
-
 - (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction {
     return [self canMoveTile:tile inDirection:direction allowBlockMove:YES];
 }

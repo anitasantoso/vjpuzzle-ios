@@ -27,7 +27,6 @@
 		08483E261841FED7009B3777 /* NSMutableArray+Shuffling.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E251841FED7009B3777 /* NSMutableArray+Shuffling.m */; };
 		08483E2A18420378009B3777 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 08483E2818420378009B3777 /* Main.storyboard */; };
 		08483E30184216BE009B3777 /* TileSwipeEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E2F184216BE009B3777 /* TileSwipeEvent.m */; };
-		08483E3318422765009B3777 /* Tile+Animation.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E3218422765009B3777 /* Tile+Animation.m */; };
 		08483E361842C119009B3777 /* PuzzleAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 08483E351842C119009B3777 /* PuzzleAnimation.m */; };
 /* End PBXBuildFile section */
 
@@ -72,8 +71,6 @@
 		08483E2918420378009B3777 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		08483E2E184216BE009B3777 /* TileSwipeEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TileSwipeEvent.h; sourceTree = "<group>"; };
 		08483E2F184216BE009B3777 /* TileSwipeEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TileSwipeEvent.m; sourceTree = "<group>"; };
-		08483E3118422765009B3777 /* Tile+Animation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Tile+Animation.h"; sourceTree = "<group>"; };
-		08483E3218422765009B3777 /* Tile+Animation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Tile+Animation.m"; sourceTree = "<group>"; };
 		08483E341842C119009B3777 /* PuzzleAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PuzzleAnimation.h; sourceTree = "<group>"; };
 		08483E351842C119009B3777 /* PuzzleAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PuzzleAnimation.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,8 +150,6 @@
 				08483E271841FFC8009B3777 /* NSMutableArray+Shuffling.h */,
 				08483E2E184216BE009B3777 /* TileSwipeEvent.h */,
 				08483E2F184216BE009B3777 /* TileSwipeEvent.m */,
-				08483E3118422765009B3777 /* Tile+Animation.h */,
-				08483E3218422765009B3777 /* Tile+Animation.m */,
 				08483E341842C119009B3777 /* PuzzleAnimation.h */,
 				08483E351842C119009B3777 /* PuzzleAnimation.m */,
 			);
@@ -297,7 +292,6 @@
 				08483E1818417D84009B3777 /* Tile.m in Sources */,
 				08483E261841FED7009B3777 /* NSMutableArray+Shuffling.m in Sources */,
 				08483E1D1841824B009B3777 /* ImageUtil.m in Sources */,
-				08483E3318422765009B3777 /* Tile+Animation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -506,6 +500,7 @@
 				08483E1218417CF8009B3777 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		08483E1318417CF8009B3777 /* Build configuration list for PBXNativeTarget "VJPuzzleExerciseTests" */ = {
 			isa = XCConfigurationList;
@@ -514,6 +509,7 @@
 				08483E1518417CF8009B3777 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

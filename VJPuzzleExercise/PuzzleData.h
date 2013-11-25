@@ -20,9 +20,7 @@
 - (MoveDirection)findMoveForTile:(Tile*)tile;
 
 - (BOOL)isPuzzleSolved;
-
 - (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction;
-- (BOOL)isBlockMove:(Tile*)tile;
 
 - (void)randomiseTiles;
 - (void)moveTile:(Tile*)tile; // move to empty slot
