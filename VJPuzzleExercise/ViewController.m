@@ -202,6 +202,8 @@
         CGPoint translation = [drag translationInView:self.view];
         
         CGPoint velocity = [drag velocityInView:self.view];
+        
+        // not sure if this is better than having a fixed duration
         CGFloat duration = [self animDurationFromVelocity:velocity];
         
         [PuzzleAnimation moveViews:views WithTranslation:translation direction:self.swipe.direction startBounds:((Tile*)[tiles firstObject]).coordinateInView endBounds:self.data.emptyTile.coordinateInView completion:^{
