@@ -31,17 +31,19 @@
     NSMutableArray *tiles2DArr = [NSMutableArray arrayWithCapacity:self.rowCount];
     NSInteger index = 0;
     
-    for(int i=0; i<self.rowCount; i++) {
+    for(int row=0; row<self.rowCount; row++) {
         
         NSMutableArray *tiles = [NSMutableArray arrayWithCapacity:self.colCount];
-        for(int j=0; j<self.colCount; j++) {
+        for(int col=0; col<self.colCount; col++) {
             
             Tile *tile = [[Tile alloc]init];
             tile.index = index++;
-            tile.locationInArray = CGPointMake(j, i);
+            
+            // location is (x, y) == (row, col)
+            tile.locationInArray = CGPointMake(row, col);
             
             // if last tile
-            if(i == self.rowCount-1 && j == self.colCount-1) {
+            if(row == self.rowCount-1 && col == self.colCount-1) {
                 tile.isEmpty = YES;
             }
             [tiles addObject:tile];
@@ -52,22 +54,22 @@
 }
 
 - (void)randomiseTiles {
-    for(int i=0; i<self.rowCount; i++) {
-        [((NSMutableArray*)[self.tilesArray objectAtIndex:i]) shuffle];
+    for(int row=0; row<self.rowCount; row++) {
+        [((NSMutableArray*)[self.tilesArray objectAtIndex:row]) shuffle];
     }
 
-    for(int i=0; i<self.rowCount; i++) {
-        for(int j=0; j<self.colCount; j++) {
-            Tile *tile = [self tileAtRow:i col:j];
-            tile.locationInArray = CGPointMake(j, i);
+    for(int row=0; row<self.rowCount; row++) {
+        for(int col=0; col<self.colCount; col++) {
+            Tile *tile = [self tileAtRow:row col:col];
+            tile.locationInArray = CGPointMake(row, col);
         }
     }
 }
 
 - (Tile*)emptyTile {
-    for(int i=0; i<self.rowCount; i++) {
-        for(int j=0; j<self.colCount; j++) {
-            Tile *tile = [self tileAtRow:i col:j];
+    for(int row=0; row<self.rowCount; row++) {
+        for(int col=0; col<self.colCount; col++) {
+            Tile *tile = [self tileAtRow:row col:col];
             if(tile.isEmpty) {
                 return tile;
             }
@@ -77,9 +79,9 @@
 }
 
 - (Tile*)tileFromTouchPoint:(CGPoint)point {
-    for(int i=0; i<self.rowCount; i++) {
-        for(int j=0; j<self.colCount; j++) {
-            Tile *tile = [self tileAtRow:i col:j];
+    for(int row=0; row<self.rowCount; row++) {
+        for(int col=0; col<self.colCount; col++) {
+            Tile *tile = [self tileAtRow:row col:col];
             if(CGRectContainsPoint(tile.coordinateInView, point)) {
                 return tile;
             }
@@ -89,13 +91,13 @@
 }
 
 - (Tile*)tileAtRow:(NSInteger)row col:(NSInteger)col {
-    if([self isPointWithinBounds:CGPointMake(row, col)]) {
+    if([self _isPointWithinBounds:CGPointMake(row, col)]) {
         return [[self.tilesArray objectAtIndex:row]objectAtIndex:col];
     }
     return nil;
 }
 
-- (BOOL)isPointWithinBounds:(CGPoint)point {
+- (BOOL)_isPointWithinBounds:(CGPoint)point {
     BOOL xInBound = point.x >= 0 && point.x < self.rowCount;
     BOOL yInBound = point.y >= 0 && point.y < self.colCount;
     return xInBound && yInBound;
@@ -103,14 +105,34 @@
 
 - (MoveDirection)findMoveForTile:(Tile*)tile {
     for(int dir=MoveDirectionTop; dir<=MoveDirectionLeft; dir++) {
-        if([self canMoveTile:tile toDirection:dir]) {
+        if([self canMoveTile:tile inDirection:dir]) {
             return dir;
         }
     }
     return MoveDirectionNone;
 }
 
-- (BOOL)canMoveTile:(Tile*)tile toDirection:(MoveDirection)direction {
+/** 
+ Allow a block of tiles to move?
+ **/
+- (BOOL)canMoveTiles:(NSArray*)tiles inDirection:(MoveDirection)direction {
+    for(Tile *tile in tiles) {
+        if([self _adjacentTileTo:tile inDirection:direction].isEmpty) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+/**
+ Allow a single tile to move? 
+ **/
+- (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction {
+    Tile *possiblyEmptyTile = [self _adjacentTileTo:tile inDirection:direction];
+    return possiblyEmptyTile.isEmpty;
+}
+
+- (Tile*)_adjacentTileTo:(Tile*)tile inDirection:(MoveDirection)direction {
     NSInteger x = tile.locationInArray.x;
     NSInteger y = tile.locationInArray.y;
     
@@ -130,31 +152,35 @@
         default:
             break;
     }
-    // can move if there is empty tile at coordinate
-    CGPoint destPoint = CGPointMake(x, y);
-    if([self isPointWithinBounds:destPoint]) {
-        return CGPointEqualToPoint(destPoint, [self emptyTile].locationInArray);
-    }
-    return NO;
-
+    return [self tileAtRow:x col:y];
 }
 
-- (void)swapTileLocation:(Tile*)tile1 withTile:(Tile*)tile2 {
-    CGPoint locInArray = tile1.locationInArray;
-    CGRect coordInView = tile1.coordinateInView;
+/**
+ TODO to move a block of tiles to an empty slot
+ **/
+- (void)moveTiles:(NSArray*)tiles toTile:(Tile*)emptyTile {
+    // TODO
+}
+
+// TODO no need for emptyTile arg
+- (void)moveTile:(Tile*)tile {
+    CGPoint locInArray = tile.locationInArray;
+    CGRect coordInView = tile.coordinateInView;
+   
+    Tile *emptyTile = [self emptyTile];
     
-    tile1.locationInArray = tile2.locationInArray;
-    tile1.coordinateInView = tile2.coordinateInView;
-    
-    tile2.locationInArray = locInArray;
-    tile2.coordinateInView = coordInView;
+    tile.locationInArray = emptyTile.locationInArray;
+    tile.coordinateInView = emptyTile.coordinateInView;
+ 
+    emptyTile.locationInArray = locInArray;
+    emptyTile.coordinateInView = coordInView;
 }
 
 - (BOOL)isPuzzleSolved {
     NSInteger index = 0;
-    for(int i=0; i<self.rowCount; i++) {
-        for(int j=0; j<self.colCount; i++) {
-            Tile *tile = [self tileAtRow:i col:j];
+    for(int row=0; row<self.rowCount; row++) {
+        for(int col=0; col<self.colCount; col++) {
+            Tile *tile = [self tileAtRow:row col:col];
             if(tile.index != index++) {
                 return NO;
             }

@@ -25,7 +25,7 @@
     UIImage *originalImage = [UIImage imageNamed:imageName];
     NSMutableArray *tileImages = [NSMutableArray arrayWithCapacity:rowCount];
     
-    CGFloat x, y = 0.0;
+    CGFloat x = 0.0, y = 0.0;
     CGFloat tileWidth = originalImage.size.width/rowCount;
     CGFloat tileHeight = originalImage.size.height/colCount;
     
@@ -33,12 +33,12 @@
         for(int j=0; j<rowCount; j++) {
             UIImage *image = [ImageUtil cropimage:originalImage inRect:CGRectMake(x, y, tileWidth, tileHeight)];
             [tileImages addObject:image];
-            x += tileWidth;
+            y += tileWidth;
         }
         
         // reset origin point
-        x = 0.0;
-        y += tileHeight;
+        y = 0.0;
+        x += tileHeight;
     }
     return tileImages;
 }

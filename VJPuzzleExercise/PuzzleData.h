@@ -9,10 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "Tile.h"
 
-typedef enum {
-    MoveDirectionNone, MoveDirectionTop, MoveDirectionRight, MoveDirectionBottom, MoveDirectionLeft
-} MoveDirection;
-
 @interface PuzzleData : NSObject
 
 - (id)initWithRowCount:(NSInteger)rowCount colCount:(NSInteger)colCount;
@@ -22,12 +18,13 @@ typedef enum {
 
 - (MoveDirection)findMoveForTile:(Tile*)tile;
 
-- (void)randomiseTiles;
-
-- (BOOL)isPointWithinBounds:(CGPoint)point;
 - (BOOL)isPuzzleSolved;
-- (BOOL)canMoveTile:(Tile*)tile toDirection:(MoveDirection)direction;
-- (void)swapTileLocation:(Tile*)tile1 withTile:(Tile*)tile2;
+
+- (BOOL)canMoveTiles:(NSArray*)tiles inDirection:(MoveDirection)direction;
+- (BOOL)canMoveTile:(Tile*)tile inDirection:(MoveDirection)direction;
+
+- (void)randomiseTiles;
+- (void)moveTile:(Tile*)tile; // move to empty slot
 
 @property NSInteger rowCount;
 @property NSInteger colCount;

@@ -8,6 +8,10 @@
 
 #import <Foundation/Foundation.h>
 
+typedef enum {
+    MoveDirectionNone, MoveDirectionTop, MoveDirectionRight, MoveDirectionBottom, MoveDirectionLeft
+} MoveDirection;
+
 @interface Tile : NSObject
 
 @property CGPoint locationInArray; // i && j
