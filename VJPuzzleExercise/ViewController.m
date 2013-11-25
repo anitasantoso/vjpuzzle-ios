@@ -102,17 +102,14 @@
     }
 }
 
+- (CGFloat)animDurationFromVelocity:(CGPoint)velocity {
+    velocity = [self refineVelocity:velocity];
+    CGFloat value = velocity.x > 0? velocity.x : velocity.y;
+    return (ABS(value)*.0002)+.2;
+}
+
 - (MoveDirection)directionFromVelocity:(CGPoint)velocity {
-    // if moving sideways, use the highest value
-    CGFloat absX = fabs(velocity.x);
-    CGFloat absY = fabs(velocity.y);
-    if(absX > 0.0 && absY > 0.0) {
-        if(absX > absY) {
-            velocity.y = 0;
-        } else {
-            velocity.x = 0;
-        }
-    }
+    velocity = [self refineVelocity:velocity];
     MoveDirection direction;
     if(velocity.x > 0) {
         direction = MoveDirectionRight;
@@ -124,6 +121,20 @@
         direction = MoveDirectionTop;
     }
     return direction;
+}
+
+- (CGPoint)refineVelocity:(CGPoint)velocity {
+    // if moving sideways, use the highest value
+    CGFloat absX = fabs(velocity.x);
+    CGFloat absY = fabs(velocity.y);
+    if(absX > 0.0 && absY > 0.0) {
+        if(absX > absY) {
+            velocity.y = 0;
+        } else {
+            velocity.x = 0;
+        }
+    }
+    return velocity;
 }
 
 - (void)handleTap:(id)sender {
@@ -190,10 +201,13 @@
         NSArray *views = [self viewsForTiles:tiles];
         CGPoint translation = [drag translationInView:self.view];
         
+        CGPoint velocity = [drag velocityInView:self.view];
+        CGFloat duration = [self animDurationFromVelocity:velocity];
+        
         [PuzzleAnimation moveViews:views WithTranslation:translation direction:self.swipe.direction startBounds:((Tile*)[tiles firstObject]).coordinateInView endBounds:self.data.emptyTile.coordinateInView completion:^{
             [self.data moveBlockOfTiles:tiles];
             self.swipe = nil;
-        } gestureEnd:gestureEnd];
+        } gestureEnd:gestureEnd animationDuration:duration];
         [drag setTranslation:CGPointMake(0, 0) inView:self.view]; // reset translation
     }
 }

@@ -11,7 +11,7 @@
 
 @interface PuzzleAnimation : NSObject
 
-+ (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction startBounds:(CGRect)startBounds endBounds:(CGRect)endBounds completion:(void (^)(void))completion gestureEnd:(BOOL)gestureEnd;
++ (void)moveViews:(NSArray*)views WithTranslation:(CGPoint)translation direction:(MoveDirection)direction startBounds:(CGRect)startBounds endBounds:(CGRect)endBounds completion:(void (^)(void))completion gestureEnd:(BOOL)gestureEnd animationDuration:(CGFloat)duration;
 
 + (void)moveView:(UIView*)view toDestLoc:(CGRect)destLoc completion:(void (^)(void))completion;
 
